@@ -1,0 +1,12 @@
+# Crawler configuration - Part 2
+user_agent: "AgenticScanner/0.2"
+timeout_seconds: 15
+max_concurrency: 8
+request_delay_ms: 50
+respect_robots_txt: true
+same_domain_only: true
+include_subdomains: true
+allowed_content_types:
+  - "text/html"
+  - "application/xhtml+xml"
+enable_js_url_extraction: true

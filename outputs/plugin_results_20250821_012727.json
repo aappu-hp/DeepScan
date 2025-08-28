@@ -1,0 +1,13 @@
+[
+  {
+    "plugin_name": "Sensitive-Info",
+    "url": "http://testphp.vulnweb.com/login.php",
+    "endpoint_type": "page",
+    "parameter": null,
+    "payload": null,
+    "evidence": "wvs@acunetix.com",
+    "confidence": 0.9,
+    "severity": "medium",
+    "timestamp": "2025-08-20T19:57:27.181908Z"
+  }
+]

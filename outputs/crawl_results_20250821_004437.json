@@ -1,0 +1,485 @@
+[
+  {
+    "url": "http://testphp.vulnweb.com/",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 0,
+    "parent": null,
+    "discovered_via": "seed",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "Home of Acunetix Art"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 0,
+    "parent": null,
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/index.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 1,
+    "parent": "http://testphp.vulnweb.com/",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "Home of Acunetix Art"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 1,
+    "parent": "http://testphp.vulnweb.com/",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/categories.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "picture categories"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/artists.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "artists"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/disclaimer.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "disclaimer"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/cart.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "you cart"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/guestbook.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "guestbook"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/guestbook.php",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "name": "anonymous user",
+      "submit": "add message"
+    },
+    "form_inputs": [
+      {
+        "name": "name",
+        "input_type": "hidden",
+        "value": "anonymous user"
+      },
+      {
+        "name": "text",
+        "input_type": null,
+        "value": null
+      },
+      {
+        "name": "submit",
+        "input_type": "submit",
+        "value": "add message"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/AJAX/index.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "ajax test"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/login.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "login page"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/userinfo.php",
+    "type": "form",
+    "method": "POST",
+    "params": {},
+    "form_inputs": [
+      {
+        "name": "uname",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "pass",
+        "input_type": "password",
+        "value": null
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/userinfo.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "login page"
+  },
+  {
+    "url": "http://testphp.vulnweb.com/userinfo.php",
+    "type": "form",
+    "method": "POST",
+    "params": {},
+    "form_inputs": [
+      {
+        "name": "uname",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "pass",
+        "input_type": "password",
+        "value": null
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/search.php?test=query",
+    "type": "form",
+    "method": "POST",
+    "params": {
+      "goButton": "go"
+    },
+    "form_inputs": [
+      {
+        "name": "searchFor",
+        "input_type": "text",
+        "value": null
+      },
+      {
+        "name": "goButton",
+        "input_type": "submit",
+        "value": "go"
+      }
+    ],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "form",
+    "status": null,
+    "content_type": null,
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/privacy.php",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 404,
+    "content_type": "text/html",
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/Mod_Rewrite_Shop/",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": null
+  },
+  {
+    "url": "http://testphp.vulnweb.com/hpp/",
+    "type": "page",
+    "method": "GET",
+    "params": {},
+    "form_inputs": [],
+    "depth": 2,
+    "parent": "http://testphp.vulnweb.com/index.php",
+    "discovered_via": "link",
+    "status": 200,
+    "content_type": "text/html",
+    "title": "HTTP Parameter Pollution Example"
+  }
+]

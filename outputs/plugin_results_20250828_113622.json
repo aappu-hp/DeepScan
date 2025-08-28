@@ -1,0 +1,14 @@
+[
+  {
+    "plugin_name": "Sensitive-Info",
+    "url": "http://testphp.vulnweb.com/login.php",
+    "endpoint_type": "page",
+    "parameter": null,
+    "payload": null,
+    "evidence": "wvs@acunetix.com",
+    "confidence": 0.9,
+    "severity": "medium",
+    "remediation": "Remove sensitive data from public pages and ensure secrets are not checked into repositories. Use environment variables and secure secret stores (Vault, AWS Secrets Manager).",
+    "timestamp": "2025-08-28T06:06:22.570832Z"
+  }
+]
