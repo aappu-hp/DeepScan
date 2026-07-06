@@ -1,223 +1,206 @@
 # DeepScan — Agentic Web Security Scanner
 
-DeepScan is an extensible web application security scanner designed for efficient reconnaissance and vulnerability detection. It combines an asynchronous crawler, a plugin-driven vulnerability testing framework, and a structured data model to streamline scanning, enable rapid extension, and provide actionable results.
+DeepScan is an AI-powered web application security scanner. It crawls a target site, runs vulnerability plugins, sends every finding to an LLM for expert triage (false-positive removal + remediation), and outputs a professional HTML/Markdown report — all from a single command.
 
 ---
 
-# What DeepScan is
-
-DeepScan is a modular web security scanner built to:
-
-* Discover the attack surface of a target website through a polite asynchronous crawler.
-* Run pluggable vulnerability checks for common security issues such as XSS, SQLi, and sensitive information exposure.
-* Collect structured findings in both JSON and human-readable console outputs.
-* Provide a clean architecture that emphasizes extensibility and professional usage.
-
----
-
-# Key Capabilities
-
-* **Asynchronous Crawler**
-
-  * Discovers same-domain URLs with configurable depth.
-  * Extracts links, forms, form inputs, and JavaScript-inlined URLs.
-  * Respects `robots.txt` policies (configurable).
-  * Outputs structured endpoint metadata including forms, inputs, content type, status, and titles.
-
-* **Plugin Framework**
-
-  * Unified `ScannerPlugin` interface and `Result` dataclass.
-  * Auto-discovery of plugins under `src/plugins/`.
-  * Example plugins included:
-
-    * Sensitive-Info (detects PII such as emails and phone numbers).
-    * SQLi-Basic (basic SQL injection heuristics).
-    * XSS-Reflective (detects reflected cross-site scripting).
-  * Central plugin runner executes all discovered plugins against URLs or endpoint exports and saves structured results.
-
-* **Clean Data Model**
-
-  * Dataclasses define endpoints and results.
-  * Ensures smooth integration between crawler output and plugin inputs.
-
----
-
-# Tech Stack
-
-* **Language**: Python 3.11+
-* **Networking**: aiohttp
-* **Parsing**: BeautifulSoup4 with lxml parser
-* **CLI & Output**: argparse, rich
-* **Configuration**: YAML (pyyaml)
-* **Domain Utilities**: tldextract
-* **Persistence**: JSON output files (lightweight and portable)
-
-### requirements.txt
+## How It Works
 
 ```
-aiohttp
-beautifulsoup4
-lxml
-pyyaml
-rich
-tldextract
+deepscan agent <url>
+       │
+       ├─ 1. Crawl       Async DFS crawler discovers all pages and forms
+       │
+       ├─ 2. Plugin Scan  XSS, SQLi, Sensitive-Info plugins run concurrently
+       │
+       ├─ 3. AI Triage    LLM reviews each finding — removes false positives,
+       │                  adjusts severity, writes specific remediations
+       │
+       └─ 4. Report       outputs/report_<ts>.html + .md + agent_results_<ts>.json
 ```
 
 ---
 
-# Prerequisites
+## Quick Start
 
-* Python 3.11 or later installed
-* A virtual environment (recommended)
-* Install dependencies:
+### 1. Install
 
 ```bash
-uv pip install -r requirements.txt
-# or
-python -m pip install -r requirements.txt
+git clone <repo>
+cd DeepScan
+uv venv && source .venv/bin/activate
+uv pip install -e .
 ```
 
----
-
-# Usage
-
-### CLI Demo
+### 2. Configure LLM provider
 
 ```bash
-uv run -m src.scanner_cli --target http://example.com --depth 1 --policy config/crawler.yaml
+deepscan configure
 ```
 
-### Crawler
+Interactive wizard — choose your provider (Gemini / OpenAI / Anthropic), enter your API key, and select a model. Config is saved to `~/.deepscan/config.yaml` (chmod 600).
+
+### 3. (Optional) Download community payloads
 
 ```bash
-uv run -m src.crawler.crawler --start http://testphp.vulnweb.com/ --max-depth 2 --output outputs
-# or print JSON directly:
-uv run -m src.crawler.crawler --start http://testphp.vulnweb.com/ --max-depth 2 --json
+deepscan update-payloads
 ```
 
-* Configuration defaults from `config/crawler.yaml`.
-* Output saved to `outputs/crawl_results_<timestamp>.json`.
+Pulls curated payload lists from [SecLists](https://github.com/danielmiessler/SecLists) into `~/.deepscan/payloads/`. Plugins fall back to built-in defaults if this step is skipped.
 
-### Plugin Runner
-
-Run plugins against a single URL:
+### 4. Run a scan
 
 ```bash
-uv run -m src.plugins.runner --url http://testphp.vulnweb.com/login.php --output outputs
+deepscan agent https://demo.testfire.net --depth 2
 ```
 
-Run plugins against crawler export:
+---
+
+## Commands
+
+| Command | Description |
+|---|---|
+| `deepscan configure` | Interactive LLM provider setup wizard |
+| `deepscan agent <url> --depth N` | Full pipeline: crawl → scan → triage → report |
+| `deepscan update-payloads` | Fetch latest community payloads from SecLists |
+| `deepscan crawl <url>` | _(coming soon)_ Crawl only |
+| `deepscan scan <url>` | _(coming soon)_ Plugin scan only |
+
+---
+
+## Features
+
+### Async Crawler
+- Depth-first crawl with configurable max depth
+- Extracts pages, forms, form inputs, and JS-inlined URLs
+- Respects `robots.txt`
+- Configurable via `config/crawler.yaml` (user-agent, timeout, concurrency, rate limiting)
+
+### Plugin Scan
+- Plugins run concurrently against all endpoints (semaphore-bounded)
+- Findings deduplicated on `(plugin, url, parameter)` before triage
+- Built-in plugins:
+
+  | Plugin | What It Detects |
+  |---|---|
+  | `XSS-Reflective` | Reflected XSS via URL params and form inputs |
+  | `SQLi-Basic` | SQL injection via error-keyword matching |
+  | `Sensitive-Info` | Emails, phone numbers, SSNs, API keys exposed in responses |
+
+- Add new plugins by implementing `ScannerPlugin` in `src/plugins/`
+
+### Community Payloads
+- Plugins load payloads from `~/.deepscan/payloads/` after `deepscan update-payloads`
+- Falls back to built-in defaults (4 payloads each) if cache is absent
+- Default limit: top 25 payloads per plugin (keeps scans fast)
+- Sources: SecLists `XSS/robot-friendly/` and `SQLi/`
+
+### AI Triage
+- Every finding gets its own focused LLM prompt (no batch)
+- Runs concurrently (up to 3 parallel LLM calls)
+- Retry logic: up to 2 retries with exponential backoff (1s, 2s) on transient errors
+- Per-finding output:
+  - `is_false_positive` — removes noise
+  - `severity` — LLM-adjusted (low / medium / high / critical)
+  - `confidence` — 0.0–1.0
+  - `explanation` — why it's a real issue
+  - `remediation` — specific fix for this endpoint and parameter
+- Falls back to raw scanner result if all retries fail
+
+### Supported LLM Providers
+
+| Provider | Configure Name |
+|---|---|
+| Google Gemini | `gemini` |
+| OpenAI | `openai` |
+| Anthropic Claude | `anthropic` |
+
+### Reports
+Every scan produces three output files in `outputs/`:
+
+| File | Format | Description |
+|---|---|---|
+| `agent_results_<ts>.json` | JSON | Machine-readable confirmed findings |
+| `report_<ts>.html` | HTML | Self-contained dark-themed report, opens in any browser |
+| `report_<ts>.md` | Markdown | GFM-compatible, ready for GitHub / Notion |
+
+---
+
+## Configuration
+
+### LLM Config — `~/.deepscan/config.yaml`
+Created by `deepscan configure`. Stored with `chmod 600`.
+
+```yaml
+provider: gemini
+api_key: YOUR_API_KEY
+model: gemini-2.0-flash
+```
+
+### Crawler Config — `config/crawler.yaml`
+
+```yaml
+user_agent: "AgenticScanner/0.2"
+timeout_seconds: 15
+max_concurrency: 8
+request_delay_ms: 50
+respect_robots_txt: true
+same_domain_only: true
+include_subdomains: true
+allowed_content_types:
+  - "text/html"
+  - "application/xhtml+xml"
+enable_js_url_extraction: true
+```
+
+---
+
+
+## Running Tests
 
 ```bash
-uv run -m src.plugins.runner --endpoints outputs/crawl_results_20250821_004437.json --output outputs
+.venv/bin/pytest -v
 ```
 
-* Results saved as `outputs/plugin_results_<timestamp>.json`.
-* Example plugin demo:
+66 tests across three suites:
 
-```bash
-uv run -m src.plugins.xss_plugin --url "http://testphp.vulnweb.com/?q=test"
+| Suite | Tests | Covers |
+|---|---|---|
+| `tests/test_triage.py` | 22 | Prompt builder, response parser, triage service (retry, fallback, concurrency) |
+| `tests/test_report.py` | 28 | ScanReport counts, HTML generation, Markdown generation, file save |
+| `tests/test_payloads.py` | 16 | PayloadLoader (cache/fallback/limit), PayloadUpdater (fetch/save/failure) |
+
+---
+
+## Adding a New Plugin
+
+1. Create `src/plugins/myplugin_plugin.py`
+2. Implement `ScannerPlugin`:
+
+```python
+from src.plugins.base import ScannerPlugin, Result
+
+class MyPlugin(ScannerPlugin):
+    name = "My-Plugin"
+
+    async def test(self, session, endpoint) -> list[Result]:
+        # test the endpoint, return Result objects
+        ...
+
+    def extract_remediation(self, result: Result) -> str:
+        return "How to fix this..."
 ```
 
----
-
-# Workflow
-
-1. **Crawl** — Discover endpoints and forms. Export endpoints JSON with rich metadata.
-2. **Analyze** — Run vulnerability plugins against discovered endpoints or a specific URL.
-3. **Report** — View console results with severity and remediation suggestions. Persist findings in structured JSON format.
+3. Done — auto-discovery picks it up on the next scan.
 
 ---
 
-# Project Structure
+## Ethics & Legal
 
-```
-DeepScan/
-├── payloads/                  # (future) payload seeds
-├── config/
-│   └── crawler.yaml           # crawler defaults and policies
-├── data/
-│   └── experience.json        # (future) payload experience store
-├── outputs/                   # runtime outputs (crawler/plugin results)
-├── requirements.txt
-└── src/
-    ├── scanner_cli.py         # CLI scaffold
-    ├── utils/
-    │   ├── config_loader.py
-    │   ├── logger.py
-    │   └── url.py
-    ├── crawler/
-    │   ├── crawler.py         # asynchronous crawler
-    │   ├── parser.py
-    │   ├── robots.py
-    │   └── models.py
-    └── plugins/
-        ├── base.py            # Result dataclass + ScannerPlugin ABC
-        ├── loader.py          # plugin auto-discovery
-        ├── runner.py          # plugin runner
-        ├── xss_plugin.py
-        ├── sqli_plugin.py
-        └── sensitive_plugin.py
-```
+Only scan systems you own or have **explicit written permission** to test. Unauthorized scanning may be illegal. DeepScan is intended for authorized security testing, CTF challenges, and research only.
 
 ---
 
-# Data & Output Formats
+## License
 
-* **Crawler Output** — `outputs/crawl_results_<timestamp>.json`
-
-```json
-{
-  "url": "http://example.com/search.php?q=test",
-  "type": "form",
-  "method": "POST",
-  "form_inputs": [{"name": "q", "input_type":"text", "value":null}],
-  "depth": 1,
-  "parent": "http://example.com/",
-  "status": 200,
-  "title": "Search"
-}
-```
-
-* **Plugin Output** — `outputs/plugin_results_<timestamp>.json`
-
-```json
-{
-  "plugin_name": "XSS-Reflective",
-  "url": "http://example.com/search.php?q=<script>alert(1)</script>",
-  "evidence": "<script>alert(1)</script>",
-  "confidence": 0.95,
-  "severity": "high",
-  "remediation": "Sanitize and encode output..."
-}
-```
-
----
-
-# Extending DeepScan
-
-* **Add new plugins** by implementing `ScannerPlugin` in `src/plugins/`.
-* **Modify crawler policies** in `config/crawler.yaml` (e.g., user-agent, allowed content types).
-* **Persist differently** by replacing JSON storage with a database.
-
----
-
-# Security and Ethics
-
-⚠️ Only scan systems you own or have explicit permission to test. Unauthorized scanning may be illegal and harmful. DeepScan is provided for authorized security testing and research only.
-
----
-
-# Roadmap
-
-* Payload seed and mutation engine with adaptive payloads.
-* Orchestration layer for automated scan pipelines.
-* Enhanced persistence (database-backed experience store).
-* Reporting dashboards and visualization.
-* Optional AI-assisted payload and remediation generation.
-
----
-
-# License
-
-This project is open for research and professional use. Use responsibly and at your own risk.
+Open for research and professional use. Use responsibly and at your own risk.
