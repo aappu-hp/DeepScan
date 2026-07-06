@@ -93,7 +93,7 @@ deepscan agent https://demo.testfire.net --depth 2
 - Plugins load payloads from `~/.deepscan/payloads/` after `deepscan update-payloads`
 - Falls back to built-in defaults (4 payloads each) if cache is absent
 - Default limit: top 25 payloads per plugin (keeps scans fast)
-- Sources: SecLists `XSS/robot-friendly/` and `SQLi/`
+- Sources: SecLists `Fuzzing/XSS/robot-friendly/XSS-Jhaddix.txt` and `Fuzzing/Databases/SQLi/Generic-SQLi.txt`
 
 ### AI Triage
 - Every finding gets its own focused LLM prompt (no batch)

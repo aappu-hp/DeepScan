@@ -10,11 +10,11 @@ _CACHE_DIR = Path.home() / ".deepscan" / "payloads"
 _SOURCES: dict[str, str] = {
     "xss": (
         "https://raw.githubusercontent.com/danielmiessler/SecLists"
-        "/master/Fuzzing/XSS/XSS-Jhaddix.txt"
+        "/master/Fuzzing/XSS/robot-friendly/XSS-Jhaddix.txt"
     ),
     "sqli": (
         "https://raw.githubusercontent.com/danielmiessler/SecLists"
-        "/master/Fuzzing/SQLi/Generic-SQLi.txt"
+        "/master/Fuzzing/Databases/SQLi/Generic-SQLi.txt"
     ),
 }
 

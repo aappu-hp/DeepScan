@@ -1,7 +1,7 @@
 from __future__ import annotations
 from pathlib import Path
 
-from src.payloads.defaults import DEFAULTS
+from src.payloads.defaults import DEFAULTS, CONTEXT_DEFAULTS
 
 _CACHE_DIR = Path.home() / ".deepscan" / "payloads"
 
@@ -32,6 +32,25 @@ class PayloadLoader:
         if path.exists():
             return self._read(path, limit)
         return list(DEFAULTS.get(name, []))
+
+    def load_for_context(self, plugin: str, context: str, limit: int = 10) -> list[str]:
+        """Return payloads for a specific plugin/context combination.
+
+        Reads from ``~/.deepscan/payloads/<plugin>/<context>.txt`` if present,
+        otherwise falls back to ``CONTEXT_DEFAULTS[plugin][context]``.
+
+        Args:
+            plugin: Plugin category — e.g. ``'xss'``.
+            context: Context tag name — e.g. ``'attr_double'``.
+            limit: Maximum number of payloads to return from a cache file.
+
+        Returns:
+            List of payload strings.
+        """
+        path = _CACHE_DIR / plugin / f"{context}.txt"
+        if path.exists():
+            return self._read(path, limit)
+        return list(CONTEXT_DEFAULTS.get(plugin, {}).get(context, []))
 
     def is_cached(self, name: str) -> bool:
         """Return True if a community payload file is cached for ``name``."""
