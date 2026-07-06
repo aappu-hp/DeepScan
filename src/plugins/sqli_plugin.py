@@ -4,15 +4,21 @@ from typing import List
 import asyncio
 
 from .base import ScannerPlugin, Result
+from ..payloads.loader import PayloadLoader
 from ..utils.logger import get_logger
 
 logger = get_logger("sqli-plugin")
 
-SQL_PAYLOADS = ["'", "1' OR '1'='1", "' OR 1=1--", "' UNION SELECT NULL--"]
-ERROR_KEYWORDS = ["sql", "mysql", "sqlite", "postgresql", "oracle", "syntax error", "warning"]
+_ERROR_KEYWORDS = ["sql", "mysql", "sqlite", "postgresql", "oracle", "syntax error", "warning"]
+
 
 class SQLiPlugin(ScannerPlugin):
+    """Detects SQL injection by injecting payloads and matching DB error keywords."""
+
     name = "SQLi-Basic"
+
+    def __init__(self) -> None:
+        self._payloads = PayloadLoader().load("sqli")
 
     async def _test_url_param(self, session, url: str, param: str, payload: str) -> Result | None:
         try:
@@ -26,7 +32,7 @@ class SQLiPlugin(ScannerPlugin):
             async with session.get(test_url, timeout=10) as resp:
                 text = await resp.text(errors="ignore")
                 low = text.lower()
-                if any(k in low for k in ERROR_KEYWORDS):
+                if any(k in low for k in _ERROR_KEYWORDS):
                     r = Result(
                         plugin_name=self.name,
                         url=test_url,
@@ -54,7 +60,7 @@ class SQLiPlugin(ScannerPlugin):
             async with session.post(endpoint.url, data=data, timeout=10) as resp:
                 text = await resp.text(errors="ignore")
                 low = text.lower()
-                if any(k in low for k in ERROR_KEYWORDS):
+                if any(k in low for k in _ERROR_KEYWORDS):
                     r = Result(
                         plugin_name=self.name,
                         url=endpoint.url,
@@ -79,10 +85,10 @@ class SQLiPlugin(ScannerPlugin):
             tasks = []
             if qs:
                 for param in qs:
-                    for payload in SQL_PAYLOADS:
+                    for payload in self._payloads:
                         tasks.append(self._test_url_param(session, endpoint.url, param, payload))
             if endpoint.type == "form" and endpoint.form_inputs:
-                for payload in SQL_PAYLOADS:
+                for payload in self._payloads:
                     tasks.append(self._test_form(session, endpoint, payload))
 
             if tasks:

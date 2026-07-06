@@ -6,14 +6,16 @@ import logging
 import sys
 import time
 from datetime import datetime, timezone
+from typing import cast
 from pathlib import Path
 
 import aiohttp
 from rich.console import Console
 
 import src.crawler.crawler as _crawler_module
+from src.config.schema import DeepScanConfig
 from src.config.user_config import UserConfig
-from src.crawler.crawler import AsyncCrawler
+from src.crawler.crawler import AsyncCrawler, build_from_config
 from src.plugins.loader import discover_plugins
 from src.plugins.runner import run_plugins_on_endpoint
 from src.report.generator import ReportGenerator
@@ -102,12 +104,19 @@ class DeepScanAgent:
         phase("Crawling")
         working("Target", self._url)
 
+        cfg_path = Path("config/crawler.yaml")
+        crawler = (
+            build_from_config(str(cfg_path))
+            if cfg_path.exists()
+            else AsyncCrawler()
+        )
+
         original_console = _crawler_module.console
         _crawler_module.console = _NullConsole(file=io.StringIO())
         t0 = time.perf_counter()
         try:
             with console.status("[working]Crawling target...[/working]", spinner="dots"):
-                endpoints = await AsyncCrawler().crawl_dfs(self._url, max_depth=self._depth)
+                endpoints = await crawler.crawl_dfs(self._url, max_depth=self._depth)
         finally:
             _crawler_module.console = original_console
 
@@ -186,7 +195,7 @@ class DeepScanAgent:
             ok("Nothing to triage", "")
             return []
 
-        config = self._user_config.load()
+        config = cast("DeepScanConfig", self._user_config.load())  # None already handled in _check_config
         working("Analysing findings", config.model)
         console.print()
 

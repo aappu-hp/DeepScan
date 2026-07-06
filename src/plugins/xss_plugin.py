@@ -4,19 +4,19 @@ from typing import List
 import asyncio
 
 from .base import ScannerPlugin, Result
+from ..payloads.loader import PayloadLoader
 from ..utils.logger import get_logger
 
 logger = get_logger("xss-plugin")
 
-XSS_PAYLOADS = [
-    "<script>alert('XSS')</script>",
-    "<img src=x onerror=alert('XSS')>",
-    "\"><script>alert(1)</script>",
-    "'\"><svg/onload=alert(1)>"
-]
 
 class XSSPlugin(ScannerPlugin):
+    """Detects reflected XSS by injecting payloads into URL parameters and forms."""
+
     name = "XSS-Reflective"
+
+    def __init__(self) -> None:
+        self._payloads = PayloadLoader().load("xss")
 
     async def _test_url_param(self, session, url: str, param: str, payload: str) -> Result | None:
         try:
@@ -81,10 +81,10 @@ class XSSPlugin(ScannerPlugin):
             tasks = []
             if qs:
                 for param in qs:
-                    for payload in XSS_PAYLOADS:
+                    for payload in self._payloads:
                         tasks.append(self._test_url_param(session, endpoint.url, param, payload))
             if endpoint.type == "form" and endpoint.form_inputs:
-                for payload in XSS_PAYLOADS:
+                for payload in self._payloads:
                     tasks.append(self._test_form(session, endpoint, payload))
 
             if tasks:

@@ -22,7 +22,11 @@ dependencies = [
 ]
 
 [project.scripts]
-deepscan = "main:app"
+deepscan = "src.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
