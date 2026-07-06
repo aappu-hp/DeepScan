@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeepScan Report — http://demo.testfire.net</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: #0f1117; color: #c9d1d9; line-height: 1.6; }
+    header { background: linear-gradient(135deg, #161b22 0%, #0d1117 100%); border-bottom: 1px solid #30363d; padding: 28px 40px; }
+    header h1 { font-size: 1.8rem; color: #58a6ff; letter-spacing: -0.5px; }
+    header p { color: #8b949e; font-size: 0.9rem; margin-top: 4px; }
+    .meta { display: flex; gap: 24px; margin-top: 12px; flex-wrap: wrap; }
+    .meta span { font-size: 0.8rem; color: #8b949e; }
+    .meta strong { color: #c9d1d9; }
+    .summary { display: flex; gap: 16px; padding: 24px 40px; flex-wrap: wrap; }
+    .card { background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px 24px; min-width: 110px; text-align: center; }
+    .card .count { font-size: 2rem; font-weight: 700; }
+    .card .label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+    .card.critical .count { color: #e74c3c; }
+    .card.high     .count { color: #e67e22; }
+    .card.medium   .count { color: #f1c40f; }
+    .card.low      .count { color: #2ecc71; }
+    .card.total    .count { color: #58a6ff; }
+    main { padding: 0 40px 40px; }
+    h2 { font-size: 1.1rem; color: #8b949e; text-transform: uppercase; letter-spacing: 1px; margin: 32px 0 12px; }
+    table { width: 100%; border-collapse: collapse; background: #161b22; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; font-size: 0.87rem; }
+    thead th { background: #1c2128; color: #8b949e; text-align: left; padding: 10px 14px; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #30363d; }
+    tbody tr { border-bottom: 1px solid #21262d; transition: background 0.15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #1c2128; }
+    tbody td { padding: 12px 14px; vertical-align: top; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.3px; }
+    .url { font-family: monospace; font-size: 0.82rem; color: #58a6ff; word-break: break-all; }
+    .param { font-family: monospace; font-size: 0.82rem; color: #d2a8ff; }
+    .conf { color: #8b949e; font-size: 0.8rem; }
+    .explanation { color: #c9d1d9; margin-bottom: 4px; }
+    .remediation { color: #3fb950; font-size: 0.83rem; }
+    footer { text-align: center; padding: 20px; color: #444c56; font-size: 0.78rem; border-top: 1px solid #21262d; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>DeepScan Security Report</h1>
+    <p>Agentic Web Security Scanner</p>
+    <div class="meta">
+      <span><strong>Target:</strong> http://demo.testfire.net</span>
+      <span><strong>Started:</strong> 2026-07-06T07:13:58+00:00</span>
+      <span><strong>Finished:</strong> 2026-07-06T07:15:27+00:00</span>
+    </div>
+  </header>
+
+  <div class="summary">
+    <div class="card total">
+      <div class="count">3</div>
+      <div class="label">Total</div>
+    </div>
+    <div class="card critical">
+      <div class="count">0</div>
+      <div class="label">Critical</div>
+    </div>
+    <div class="card high">
+      <div class="count">3</div>
+      <div class="label">High</div>
+    </div>
+    <div class="card medium">
+      <div class="count">0</div>
+      <div class="label">Medium</div>
+    </div>
+    <div class="card low">
+      <div class="count">0</div>
+      <div class="label">Low</div>
+    </div>
+  </div>
+
+  <main>
+    <h2>Confirmed Findings</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Severity</th>
+          <th>Plugin</th>
+          <th>URL / Parameter</th>
+          <th>Confidence</th>
+          <th>Explanation</th>
+          <th>Remediation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="badge" style="background:#e67e22">HIGH</span></td><td>XSS-Reflective</td><td><span class="url">http://demo.testfire.net/search.jsp</span><br><span class="param">query</span></td><td><span class="conf">0.95</span></td><td><div class="explanation">The application reflects the 'query' parameter directly into the HTML response without output encoding, allowing the browser to execute the user-supplied script.</div></td><td><div class="remediation">Implement context-aware HTML entity encoding for the 'query' parameter before rendering it in the JSP, for example by using the JSTL &lt;c:out&gt; tag.</div></td></tr>
+<tr><td><span class="badge" style="background:#e67e22">HIGH</span></td><td>SQLi-Basic</td><td><span class="url">http://demo.testfire.net/doLogin</span><br><span class="param">uid,passw,btnSubmit</span></td><td><span class="conf">0.95</span></td><td><div class="explanation">The occurrence of a database-specific error in response to a UNION-based payload indicates that the application is directly concatenating unsanitized user input into its SQL queries.</div></td><td><div class="remediation">Implement parameterized queries (prepared statements) for the 'uid' and 'passw' parameters to ensure user input is treated strictly as data and not executable code.</div></td></tr>
+<tr><td><span class="badge" style="background:#e67e22">HIGH</span></td><td>XSS-Reflective</td><td><span class="url">http://demo.testfire.net/sendFeedback</span><br><span class="param">cfile,name,email_addr,subject,comments,submit,reset</span></td><td><span class="conf">0.95</span></td><td><div class="explanation">This is exploitable because the server reflects unencoded user-supplied input directly into the HTML response, allowing the browser to execute arbitrary JavaScript in the user's security context.</div></td><td><div class="remediation">Implement context-aware HTML output encoding for all user-supplied parameters, such as cfile and name, before they are rendered in any part of the HTML document.</div></td></tr>
+      </tbody>
+    </table>
+  </main>
+
+  <footer>Generated by DeepScan — 2026-07-06T07:15:27+00:00</footer>
+</body>
+</html>

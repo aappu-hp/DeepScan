@@ -1,0 +1,50 @@
+[
+  {
+    "plugin_name": "XSS-Reflective",
+    "url": "http://demo.testfire.net/search.jsp",
+    "endpoint_type": "form",
+    "parameter": "query",
+    "payload": "<script>alert('XSS')</script>",
+    "evidence": "<script>alert('XSS')</script>",
+    "confidence": 0.9,
+    "severity": "high",
+    "remediation": "Sanitize and encode output. Use an allowlist for input validation and apply proper output encoding for HTML contexts. Example (Python/Flask): from markupsafe import escape; safe = escape(user_input)",
+    "timestamp": "2026-07-06T07:14:10.249155Z",
+    "triage_severity": "high",
+    "triage_confidence": 0.95,
+    "triage_explanation": "The application reflects the 'query' parameter directly into the HTML response without output encoding, allowing the browser to execute the user-supplied script.",
+    "triage_remediation": "Implement context-aware HTML entity encoding for the 'query' parameter before rendering it in the JSP, for example by using the JSTL <c:out> tag."
+  },
+  {
+    "plugin_name": "SQLi-Basic",
+    "url": "http://demo.testfire.net/doLogin",
+    "endpoint_type": "form",
+    "parameter": "uid,passw,btnSubmit",
+    "payload": "' UNION SELECT NULL--",
+    "evidence": "SQL error keyword found in response",
+    "confidence": 0.8,
+    "severity": "high",
+    "remediation": "Use parameterized queries / prepared statements and avoid string concatenation for SQL. Example (Python + psycopg2): cursor.execute('SELECT * FROM users WHERE id=%s', (user_id,))",
+    "timestamp": "2026-07-06T07:14:10.459177Z",
+    "triage_severity": "high",
+    "triage_confidence": 0.95,
+    "triage_explanation": "The occurrence of a database-specific error in response to a UNION-based payload indicates that the application is directly concatenating unsanitized user input into its SQL queries.",
+    "triage_remediation": "Implement parameterized queries (prepared statements) for the 'uid' and 'passw' parameters to ensure user input is treated strictly as data and not executable code."
+  },
+  {
+    "plugin_name": "XSS-Reflective",
+    "url": "http://demo.testfire.net/sendFeedback",
+    "endpoint_type": "form",
+    "parameter": "cfile,name,email_addr,subject,comments,submit,reset",
+    "payload": "<script>alert('XSS')</script>",
+    "evidence": "<script>alert('XSS')</script>",
+    "confidence": 0.9,
+    "severity": "high",
+    "remediation": "Sanitize and encode output. Use an allowlist for input validation and apply proper output encoding for HTML contexts. Example (Python/Flask): from markupsafe import escape; safe = escape(user_input)",
+    "timestamp": "2026-07-06T07:14:10.460963Z",
+    "triage_severity": "high",
+    "triage_confidence": 0.95,
+    "triage_explanation": "This is exploitable because the server reflects unencoded user-supplied input directly into the HTML response, allowing the browser to execute arbitrary JavaScript in the user's security context.",
+    "triage_remediation": "Implement context-aware HTML output encoding for all user-supplied parameters, such as cfile and name, before they are rendered in any part of the HTML document."
+  }
+]

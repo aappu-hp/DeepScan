@@ -101,21 +101,25 @@ class SQLiPlugin(ScannerPlugin):
 
 if __name__ == "__main__":
     import argparse, asyncio
+    from dataclasses import dataclass, field
     from rich.console import Console
+
+    @dataclass
+    class _DemoEndpoint:
+        url: str
+        type: str = "page"
+        form_inputs: list = field(default_factory=list)
+        params: dict = field(default_factory=dict)
+
     p = argparse.ArgumentParser()
     p.add_argument("--url", required=True)
     args = p.parse_args()
     console = Console()
-    async def demo():
+
+    async def demo() -> None:
         import aiohttp
         async with aiohttp.ClientSession() as session:
-            plugin = SQLiPlugin()
-            class E: pass
-            e = E()
-            e.url = args.url
-            e.type = "page"
-            e.form_inputs = []
-            e.params = {}
-            res = await plugin.test(session, e)
+            res = await SQLiPlugin().test(session, _DemoEndpoint(url=args.url))
             console.print(res)
+
     asyncio.run(demo())
